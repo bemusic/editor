@@ -38,10 +38,10 @@ module.exports = {
         data: {
           type: 'sampler',
           notes: [
-            { t: 0, l: 120, sample: { file: 'drum', slice: [ 0, 1 ] } },
-            { t: 240, l: 120, sample: { file: 'drum', slice: [ 4, 5 ] } },
-            { t: 480, l: 120, sample: { file: 'drum', slice: [ 0, 1 ] } },
-            { t: 720, l: 120, sample: { file: 'drum', slice: [ 4, 5 ] } }
+            { t: 0, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
+            { t: 240, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } },
+            { t: 480, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
+            { t: 720, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } }
           ]
         }
       }
