@@ -1,7 +1,7 @@
 module.exports = {
   timing: {
     initialBPM: 140,
-    bpmChanges: [ { y: 960, bpm: 160 } ]
+    bpmChanges: [ { y: 960, bpm: 160 } ],
     stops: [ ]
   },
   notechart: {

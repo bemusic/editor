@@ -7,7 +7,7 @@ export const stories = {
   ),
   'with some objects': (log) => {
     const objects = [ ]
-    for (let i = 0; i < 4096; i ++) {
+    for (let i = 0; i < 4096; i++) {
       const object = {
         _id: i + 1,
         top: Math.round(Math.random() * 8192),
@@ -33,7 +33,7 @@ export const stories = {
     function renderChildren (viewport) {
       return [ ...generateChildren(viewport) ]
     }
-    function* generateChildren (viewport) {
+    function * generateChildren (viewport) {
       for (const object of objects) {
         if (object.left < viewport.left - 100) continue
         if (object.left > viewport.left + viewport.width + 100) continue
@@ -61,5 +61,5 @@ export const stories = {
       getWidth={getWidth}
       getHeight={getHeight}
     />
-  },
+  }
 }

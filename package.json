@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "storybook": "start-storybook -p 9001"
+    "storybook": "start-storybook -p 9001",
+    "lint": "standard src/**/*.js && eslint src"
   },
   "repository": {
     "type": "git",
@@ -20,13 +21,17 @@
   "devDependencies": {
     "@kadira/storybook": "^1.38.3",
     "babel-core": "^6.10.4",
+    "babel-eslint": "^6.1.2",
     "babel-plugin-transform-runtime": "^6.9.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-es2016": "^6.11.3",
     "babel-preset-modern-browsers": "^5.0.2",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-2": "^6.11.0",
+    "eslint": "^3.1.1",
+    "eslint-plugin-import": "^1.11.0",
     "mocha": "^2.5.3",
+    "standard": "^7.1.2",
     "test-bed": "^0.5.3",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1",
@@ -39,5 +44,8 @@
     "react": "^15.2.1",
     "react-addons-shallow-compare": "^15.2.1",
     "react-dom": "^15.2.1"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }
