@@ -64,14 +64,7 @@ const ScrollableArea = React.createClass({
           {renderContents(viewport)}
         </div>
       </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0, left: 0
-        }}
-      >
-        {renderOverlay(viewport)}
-      </div>
+      {renderOverlay(viewport)}
     </div>
   }
 })

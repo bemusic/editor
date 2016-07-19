@@ -49,11 +49,11 @@ export const stories = {
       return 8192
     }
     function renderOverlay (viewport) {
-      return [
-        <button key='button'>
+      return <div>
+        <button key='button' style={{ position: 'absolute', bottom: 10, left: 10 }}>
           I am an overlay button
         </button>
-      ]
+      </div>
     }
     return <ScrollableArea
       renderContents={renderChildren}
