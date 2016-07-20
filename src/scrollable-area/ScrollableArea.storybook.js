@@ -50,7 +50,7 @@ export const stories = {
     }
     function renderOverlay (viewport) {
       return <div>
-        <button key='button' style={{ position: 'absolute', bottom: 10, left: 10 }}>
+        <button key="button" style={{ position: 'absolute', bottom: 10, left: 10 }}>
           I am an overlay button
         </button>
       </div>

@@ -1,3 +1,10 @@
 extends:
   - plugin:import/errors
+  - standard
+  - standard-react
 parser: babel-eslint
+globals:
+  describe: false
+  it: false
+rules:
+  react/prop-types: warn
