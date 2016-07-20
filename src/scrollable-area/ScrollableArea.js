@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Viewport from './Viewport'
+import withCustomScrollbar from '../custom-scrollbar/withCustomScrollbar'
 import shallowCompare from 'react-addons-shallow-compare'
 
 const ScrollableArea = React.createClass({
@@ -45,25 +46,27 @@ const ScrollableArea = React.createClass({
         top: 0, right: 0, bottom: 0, left: 0
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: 0, right: 0, bottom: 0, left: 0,
-          overflow: 'auto'
-        }}
-        ref={this.registerScroller}
-        onScroll={this.updateViewport}
-      >
+      {withCustomScrollbar(
         <div
           style={{
-            position: 'relative',
-            height: getHeight(viewport),
-            width: getWidth(viewport)
+            position: 'absolute',
+            top: 0, right: 0, bottom: 0, left: 0,
+            overflow: 'auto'
           }}
+          ref={this.registerScroller}
+          onScroll={this.updateViewport}
         >
-          {renderContents(viewport)}
+          <div
+            style={{
+              position: 'relative',
+              height: getHeight(viewport),
+              width: getWidth(viewport)
+            }}
+          >
+            {renderContents(viewport)}
+          </div>
         </div>
-      </div>
+      )}
       {renderOverlay(viewport)}
     </div>
   }

@@ -23,7 +23,7 @@ export const stories = {
             width: 25,
             height: 25,
             borderRadius: 25,
-            background: 'black'
+            background: '#abcdef'
           }}
         >
         </div>

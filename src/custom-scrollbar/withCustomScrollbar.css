@@ -1,0 +1,31 @@
+
+.with-custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.with-custom-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+.with-custom-scrollbar::-webkit-scrollbar-track {
+  appearance: none;
+  background: #353433;
+  box-shadow: inset 0 0 0 1px #454443;
+}
+
+.with-custom-scrollbar::-webkit-scrollbar-thumb {
+  appearance: none;
+  background: #8b8685;
+}
+
+.with-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  appearance: none;
+  background: #9b9695;
+  box-shadow: inset 0 0 0 1px #e9e8e7;
+}
+
+.with-custom-scrollbar::-webkit-scrollbar-corner {
+  appearance: none;
+  background: transparent;
+}

@@ -12,17 +12,7 @@ module.exports = {
     filename: '[name].js'
   },
   module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        include: resolve(__dirname, 'src'),
-        loader: 'babel'
-      },
-      {
-        test: /\.css$/,
-        loader: 'style!css'
-      }
-    ]
+    loaders: require('./webpack/loaders')
   },
   plugins: [
     new HtmlPlugin()
