@@ -8,17 +8,18 @@ describe('editor column groups', function () {
       { title: 'B', columns: [ { width: 64 }, { width: 20 } ] }
     ]
     const viewModel = EditorViewModel.calculateColumnGroupsViewModel(groups)
+    const { columnGroups } = viewModel
 
-    // Asserting the groups
-    assert.equal(viewModel[0].left, 8)
-    assert.equal(viewModel[0].width, 32)
-    assert.equal(viewModel[1].left, 8 + 32 + 8)
-    assert.equal(viewModel[1].width, 64 + 20)
+    // Asserting the individual group…
+    assert.equal(columnGroups[0].left, 8)
+    assert.equal(columnGroups[0].width, 32)
+    assert.equal(columnGroups[1].left, 8 + 32 + 8)
+    assert.equal(columnGroups[1].width, 64 + 20)
 
-    // Asserting the columns
-    assert.equal(viewModel[0].columns[0].left, 8)
-    assert.equal(viewModel[0].columns[0].width, 32)
-    assert.equal(viewModel[1].columns[1].left, 112)
-    assert.equal(viewModel[1].columns[1].width, 20)
+    // Asserting the columns…
+    assert.equal(columnGroups[0].columns[0].left, 8)
+    assert.equal(columnGroups[0].columns[0].width, 32)
+    assert.equal(columnGroups[1].columns[1].left, 112)
+    assert.equal(columnGroups[1].columns[1].width, 20)
   })
 })

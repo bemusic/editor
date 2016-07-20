@@ -51,7 +51,7 @@ const ScrollableArea = React.createClass({
           style={{
             position: 'absolute',
             top: 0, right: 0, bottom: 0, left: 0,
-            overflow: 'auto'
+            overflow: 'scroll'
           }}
           ref={this.registerScroller}
           onScroll={this.updateViewport}
@@ -67,7 +67,18 @@ const ScrollableArea = React.createClass({
           </div>
         </div>
       )}
-      {renderOverlay(viewport)}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0, right: 8, bottom: 8, left: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none'
+        }}
+      >
+        <div style={{ pointerEvents: 'auto' }}>
+          {renderOverlay(viewport)}
+        </div>
+      </div>
     </div>
   }
 })

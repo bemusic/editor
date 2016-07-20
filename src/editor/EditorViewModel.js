@@ -1,6 +1,6 @@
 
 export function calculateColumnGroupsViewModel (groups) {
-  const viewModel = [ ]
+  const columnGroups = [ ]
   let currentX = 8
   for (const group of groups) {
     const groupStartX = currentX
@@ -13,17 +13,18 @@ export function calculateColumnGroupsViewModel (groups) {
         width: currentX - columnStartX
       })
     }
-    viewModel.push({
+    columnGroups.push({
       left: groupStartX,
       width: currentX - groupStartX,
-      columns: columns
+      columns: columns,
+      title: group.title
     })
     currentX += 8
   }
-  return viewModel
+  return { columnGroups, width: currentX }
 }
 
-export const defaultTrackGroups = [
+export const defaultColumnGroups = [
   {
     title: 'CONTROL',
     columns: [
