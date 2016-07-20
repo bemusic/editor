@@ -10,7 +10,8 @@ export function calculateColumnGroupsViewModel (groups) {
       currentX += column.width
       columns.push({
         left: columnStartX,
-        width: currentX - columnStartX
+        width: currentX - columnStartX,
+        title: column.title
       })
     }
     columnGroups.push({
@@ -33,7 +34,7 @@ export const defaultColumnGroups = [
     ]
   },
   {
-    title: 'FUMEN',
+    title: '譜面',
     columns: [
       { width: 62, title: 'SARA' },
       { width: 34, title: '1' },
@@ -46,7 +47,7 @@ export const defaultColumnGroups = [
     ]
   },
   {
-    title: 'ONGAKU',
+    title: '音楽',
     columns: [
       { width: 64, title: '1' },
       { width: 64, title: '2' },

@@ -6,15 +6,10 @@ import ScrollableArea from '../scrollable-area/ScrollableArea'
 // const state = EditorState.initialize({
 //   song: require('./example-song')
 // })
-
-const VerticalGrid = ({ left }) => (
-  <div style={{
-    position: 'absolute',
-    top: 0, width: 1, left, bottom: 0,
-    background: '#454443'
-  }}>
-  </div>
-)
+import VerticalGrid from './VerticalGrid'
+import HorizontalGrid from './HorizontalGrid'
+import TrackGroupTitle from './TrackGroupTitle'
+import TrackTitle from './TrackTitle'
 
 export const EditorContainer = React.createClass({
   getInitialState () {
@@ -30,40 +25,36 @@ export const EditorContainer = React.createClass({
     return viewModel.width
   },
   getHeight () {
-    return 50000
+    return 360
   },
   renderContents () {
     const viewModel = this.selectColumnViewModel()
     return <div style={{ fontSize: 96 }}>
-      <div key="vgrid">
-        {viewModel.columnGroups.map((group, groupIndex) => (
-          <div key={groupIndex}>
-            {group.columns.map((column, columnIndex) => (
-              <VerticalGrid left={column.left} key={columnIndex} />
-            ))}
-            <VerticalGrid left={group.left + group.width} />
-          </div>
-        ))}
-      </div>
+      <VerticalGridContainer viewModel={viewModel} />
+      <HorizontalGridContainer />
     </div>
   },
   renderOverlay (viewport) {
     const viewModel = this.selectColumnViewModel()
     return <div>
-      {viewModel.columnGroups.map((group) => (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: group.left - viewport.left + 1,
-            width: group.width - 1,
-            background: '#252423',
-            borderBottom: '1px solid #454443'
-          }}
-        >
-          {group.title}
-        </div>
-      ))}
+      <div style={{ position: 'absolute', top: 0, left: -viewport.left }}>
+        {viewModel.columnGroups.map((group, groupIndex) => (
+          <div key={groupIndex}>
+            <TrackGroupTitle
+              left={group.left}
+              width={group.width}
+              title={group.title}
+            />
+            {group.columns.map((column, columnIndex) => (
+              <TrackTitle
+                left={column.left}
+                width={column.width}
+                title={column.title}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   },
   render () {
@@ -74,6 +65,47 @@ export const EditorContainer = React.createClass({
         renderContents={this.renderContents}
         renderOverlay={this.renderOverlay}
       />
+    )
+  }
+})
+
+const HorizontalGridContainer = React.createClass({
+  shouldComponentUpdate () {
+    return false // TODO
+  },
+  render () {
+    return (
+      <div>
+        {[ ...(function * () {
+          for (let i = 0; i <= 360; i += 24) {
+            yield (<HorizontalGrid top={i} />)
+          }
+        }()) ]}
+      </div>
+    )
+  }
+})
+
+const VerticalGridContainer = React.createClass({
+  propTypes: {
+    viewModel: React.PropTypes.object
+  },
+  shouldComponentUpdate () {
+    return false // TODO
+  },
+  render () {
+    const viewModel = this.props.viewModel
+    return (
+      <div>
+        {viewModel.columnGroups.map((group, groupIndex) => (
+          <div key={groupIndex}>
+            {group.columns.map((column, columnIndex) => (
+              <VerticalGrid left={column.left} key={columnIndex} />
+            ))}
+            <VerticalGrid left={group.left + group.width} />
+          </div>
+        ))}
+      </div>
     )
   }
 })
