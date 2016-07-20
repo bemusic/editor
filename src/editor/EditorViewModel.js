@@ -23,7 +23,7 @@ export function calculateColumnGroupsViewModel (groups) {
   return viewModel
 }
 
-const trackGroups = [
+export const defaultTrackGroups = [
   {
     title: 'CONTROL',
     columns: [

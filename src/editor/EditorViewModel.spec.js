@@ -1,6 +1,6 @@
 import * as EditorViewModel from './EditorViewModel'
 import assert from 'assert'
-
+/* global describe, it */
 describe('editor column groups', function () {
   it('should be arranged vertically, each column group separated by blank space', () => {
     const groups = [
