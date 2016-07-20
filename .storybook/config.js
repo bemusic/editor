@@ -21,3 +21,6 @@ function loadStories() {
 }
 
 configure(loadStories, module)
+
+document.body.style.backgroundColor = '#090807'
+document.body.style.color = '#e9e8e7'
