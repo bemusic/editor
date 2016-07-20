@@ -7,6 +7,15 @@ import ScrollableArea from '../scrollable-area/ScrollableArea'
 //   song: require('./example-song')
 // })
 
+const VerticalGrid = ({ left }) => (
+  <div style={{
+    position: 'absolute',
+    top: 0, width: 1, left, bottom: 0,
+    background: '#454443'
+  }}>
+  </div>
+)
+
 export const EditorContainer = React.createClass({
   getInitialState () {
     this.selectColumnViewModel = ((x) => () => x)(
@@ -24,7 +33,19 @@ export const EditorContainer = React.createClass({
     return 50000
   },
   renderContents () {
-    return <div style={{ fontSize: 96 }}>Contents</div>
+    const viewModel = this.selectColumnViewModel()
+    return <div style={{ fontSize: 96 }}>
+      <div key="vgrid">
+        {viewModel.columnGroups.map((group, groupIndex) => (
+          <div key={groupIndex}>
+            {group.columns.map((column, columnIndex) => (
+              <VerticalGrid left={column.left} key={columnIndex} />
+            ))}
+            <VerticalGrid left={group.left + group.width} />
+          </div>
+        ))}
+      </div>
+    </div>
   },
   renderOverlay (viewport) {
     const viewModel = this.selectColumnViewModel()
@@ -34,9 +55,10 @@ export const EditorContainer = React.createClass({
           style={{
             position: 'absolute',
             top: 0,
-            left: group.left - viewport.left,
-            width: group.width,
-            background: '#252423'
+            left: group.left - viewport.left + 1,
+            width: group.width - 1,
+            background: '#252423',
+            borderBottom: '1px solid #454443'
           }}
         >
           {group.title}
