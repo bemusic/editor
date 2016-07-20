@@ -4,7 +4,7 @@
   "description": "I need a better name for this!",
   "main": "index.js",
   "scripts": {
-    "test": "zsh -c 'env NODE_ENV=test nyc --reporter=text --reporter=lcovonly -- mocha -r babel-polyfill -r babel-register src/**/*.spec.js'",
+    "test": "bash -c 'env NODE_ENV=test nyc --reporter=text --reporter=lcovonly -- mocha -r babel-polyfill -r babel-register src/**/*.spec.js'",
     "storybook": "start-storybook -p 9001",
     "lint": "standard src/**/*.js && eslint src",
     "dev": "webpack-dev-server --port 8999 --progress --inline --hot",
