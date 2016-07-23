@@ -74,6 +74,7 @@
     "classnames": "^2.2.5",
     "invariant": "^2.2.1",
     "lodash": "^4.13.1",
+    "midifile": "^1.0.4",
     "react": "^15.2.1",
     "react-addons-shallow-compare": "^15.2.1",
     "react-dom": "^15.2.1"

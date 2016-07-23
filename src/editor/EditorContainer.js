@@ -25,13 +25,13 @@ export const EditorContainer = React.createClass({
     return viewModel.width
   },
   getHeight () {
-    return 360
+    return 3600
   },
   renderContents () {
     const viewModel = this.selectColumnViewModel()
     return <div style={{ fontSize: 96 }}>
-      <VerticalGridContainer viewModel={viewModel} />
       <HorizontalGridContainer />
+      <VerticalGridContainer viewModel={viewModel} />
     </div>
   },
   renderOverlay (viewport) {
@@ -77,7 +77,7 @@ const HorizontalGridContainer = React.createClass({
     return (
       <div>
         {[ ...(function * () {
-          for (let i = 0; i <= 360; i += 24) {
+          for (let i = 0; i <= 3600; i += 120) {
             yield (<HorizontalGrid top={i} />)
           }
         }()) ]}

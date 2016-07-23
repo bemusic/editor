@@ -1,7 +1,7 @@
 
 export function calculateColumnGroupsViewModel (groups) {
   const columnGroups = [ ]
-  let currentX = 8
+  let currentX = 64
   for (const group of groups) {
     const groupStartX = currentX
     const columns = [ ]

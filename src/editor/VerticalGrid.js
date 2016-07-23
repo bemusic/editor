@@ -5,7 +5,7 @@ export const VerticalGrid = createPureFunctionalComponent(({ left }) => (
   <div style={{
     position: 'absolute',
     top: 0, width: 1, left, bottom: 0,
-    background: '#454443'
+    background: '#656463'
   }}>
   </div>
 ))

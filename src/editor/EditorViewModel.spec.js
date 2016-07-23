@@ -11,15 +11,15 @@ describe('editor column groups', function () {
     const { columnGroups } = viewModel
 
     // Asserting the individual group…
-    assert.equal(columnGroups[0].left, 8)
+    assert.equal(columnGroups[0].left, 64)
     assert.equal(columnGroups[0].width, 32)
-    assert.equal(columnGroups[1].left, 8 + 32 + 8)
+    assert.equal(columnGroups[1].left, 64 + 32 + 8)
     assert.equal(columnGroups[1].width, 64 + 20)
 
     // Asserting the columns…
-    assert.equal(columnGroups[0].columns[0].left, 8)
+    assert.equal(columnGroups[0].columns[0].left, 64)
     assert.equal(columnGroups[0].columns[0].width, 32)
-    assert.equal(columnGroups[1].columns[1].left, 112)
+    assert.equal(columnGroups[1].columns[1].left, 64 + 32 + 8 + 64)
     assert.equal(columnGroups[1].columns[1].width, 20)
   })
 })
