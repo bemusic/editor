@@ -1,3 +1,4 @@
+import * as MIDIData from '../midi-data/MIDIData'
 import parseMidi, { createNoteBuffer } from './parseMidi'
 import fs from 'fs'
 import path from 'path'
@@ -8,15 +9,17 @@ describe('the MIDI file parser', function () {
     const buffer = fs.readFileSync(path.resolve(__dirname, 'test-fixtures', 'lead.mid'))
     const arrayBuffer = new Uint8Array(buffer).buffer
     const result = parseMidi(arrayBuffer)
-    assert.equal(result.notes.length, 26)
+    const notes = MIDIData.getNotes(result)
+    const ppqn = MIDIData.getPPQN(result)
+    assert.equal(notes.length, 26)
 
     // The last note is on the 15th measure. It’s 4/4 time signature.
-    assert.equal(result.notes[25].startBeat, result.ppqn * 4 * 15)
-    assert.equal(result.notes[25].endBeat, result.ppqn * 4 * 17)
+    assert.equal(notes[25].startBeat, ppqn * 4 * 15)
+    assert.equal(notes[25].endBeat, ppqn * 4 * 17)
 
     // It’s 238bpm
     assert.equal(
-      Math.round(result.notes[25].startTime),
+      Math.round(notes[25].startTime),
       Math.round((60000 / 238) * 4 * 15)
     )
   })

@@ -1,5 +1,6 @@
 import MIDIFile from 'midifile'
 import MIDIEvents from 'midievents'
+import * as MIDIData from '../midi-data/MIDIData'
 
 export function parseMidi (buffer) {
   const midi = new MIDIFile(buffer)
@@ -62,7 +63,7 @@ function createMidiBuilder (ppqn) {
       }
     },
     build () {
-      return { notes, ppqn }
+      return MIDIData.initialize({ notes, ppqn })
     }
   }
 }
