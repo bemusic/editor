@@ -52,9 +52,9 @@ function createMidiBuilder (ppqn) {
         const note = {
           _id: nextId++,
           startTime: startNote.t,
-          startBeat: startNote.y,
+          startPulse: startNote.y,
           endTime: t,
-          endBeat: y,
+          endPulse: y,
           channel: startNote.channel,
           key: startNote.key,
           velocity: startNote.velocity

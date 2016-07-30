@@ -39,10 +39,10 @@ module.exports = {
           type: 'sampler',
           l: 960,
           notes: [
-            { t: 0, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
-            { t: 240, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } },
-            { t: 480, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
-            { t: 720, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } }
+            { y: 0, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
+            { y: 240, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } },
+            { y: 480, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
+            { y: 720, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } }
           ]
         }
       }

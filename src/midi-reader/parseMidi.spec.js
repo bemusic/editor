@@ -14,8 +14,8 @@ describe('the MIDI file parser', function () {
     assert.equal(notes.length, 26)
 
     // The last note is on the 15th measure. It’s 4/4 time signature.
-    assert.equal(notes[25].startBeat, ppqn * 4 * 15)
-    assert.equal(notes[25].endBeat, ppqn * 4 * 17)
+    assert.equal(notes[25].startPulse, ppqn * 4 * 15)
+    assert.equal(notes[25].endPulse, ppqn * 4 * 17)
 
     // It’s 238bpm
     assert.equal(

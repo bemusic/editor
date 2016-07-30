@@ -1,11 +1,7 @@
 import React from 'react'
-// import * as EditorState from '../editor-state/EditorState'
 import * as EditorViewModel from './EditorViewModel'
 import ScrollableArea from '../scrollable-area/ScrollableArea'
 
-// const state = EditorState.initialize({
-//   song: require('./example-song')
-// })
 import VerticalGrid from './VerticalGrid'
 import HorizontalGrid from './HorizontalGrid'
 import TrackGroupTitle from './TrackGroupTitle'
