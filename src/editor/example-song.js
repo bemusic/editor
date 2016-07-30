@@ -37,6 +37,7 @@ module.exports = {
         y: 960,
         data: {
           type: 'sampler',
+          l: 960,
           notes: [
             { t: 0, l: 120, k: 36, sample: { file: 'drum', slice: [ 0, 1 ] } },
             { t: 240, l: 120, k: 38, sample: { file: 'drum', slice: [ 4, 5 ] } },

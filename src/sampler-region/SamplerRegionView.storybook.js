@@ -1,16 +1,15 @@
 import React from 'react'
-import SamplerRegion from './SamplerRegion'
-import SamplerRegionNote from './SamplerRegionNote'
+import SamplerRegionView, { Note } from './SamplerRegionView'
 
 export const stories = {
   'sampler region': () => (
-    <SamplerRegion
+    <SamplerRegionView
       width={64}
       hue={64}
       height={180}
     >
       {renderNotes()}
-    </SamplerRegion>
+    </SamplerRegionView>
   )
 }
 
@@ -22,7 +21,7 @@ function renderNotes () {
     { x: 52, y: 135, height: 45 }
   ]
   return notes.map(note => (
-    <SamplerRegionNote
+    <Note
       x={note.x}
       y={note.y}
       width={8}

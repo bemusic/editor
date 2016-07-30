@@ -29,14 +29,15 @@ export const defaultColumnGroups = [
   {
     title: 'CONTROL',
     columns: [
-      { width: 48, title: 'BPM' },
-      { width: 48, title: 'STOP' }
+      { width: 48, title: '/' },
+      { width: 48, title: '♩' },
+      { width: 48, title: '𝄐' }
     ]
   },
   {
     title: '譜面',
     columns: [
-      { width: 62, title: 'SARA' },
+      { width: 62, title: '◎' },
       { width: 34, title: '1' },
       { width: 26, title: '2' },
       { width: 34, title: '3' },
