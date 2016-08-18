@@ -1,5 +1,7 @@
 import * as MIDIData from '../midi-data/MIDIData'
 import * as MIDINote from '../midi-data/MIDINote'
+import * as Note from '../sampler-region/Note'
+import _ from 'lodash'
 
 export function midiDataToSamplerRegion (midiData, resolution = 240) {
   const midiNotes = MIDIData.getNotes(midiData)
@@ -8,14 +10,11 @@ export function midiDataToSamplerRegion (midiData, resolution = 240) {
   const samplerNotes = midiNotes.map(note => {
     const startY = pulseToY(MIDINote.getStartPulse(note))
     const endY = pulseToY(MIDINote.getEndPulse(note))
-    return {
-      k: MIDINote.getKey(note),
-      y: startY,
-      l: endY - startY
-    }
+    return Note.init(MIDINote.getKey(note), startY, endY - startY)
   })
   return {
-    notes: samplerNotes
+    notes: samplerNotes,
+    l: _.max(_.map(samplerNotes, Note.end))
   }
 }
 
