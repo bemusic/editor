@@ -60,7 +60,8 @@ const ScrollableArea = React.createClass({
             style={{
               position: 'relative',
               height: getHeight(viewport),
-              width: getWidth(viewport)
+              width: getWidth(viewport),
+              overflow: 'hidden'
             }}
           >
             {renderContents(viewport)}
