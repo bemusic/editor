@@ -71,6 +71,7 @@
     "webpack-hot-middleware": "^2.12.1"
   },
   "dependencies": {
+    "arraybuffer-loader": "^0.2.1",
     "babel-runtime": "^6.9.2",
     "classnames": "^2.2.5",
     "invariant": "^2.2.1",
@@ -80,7 +81,11 @@
     "react": "^15.2.1",
     "react-addons-shallow-compare": "^15.2.1",
     "react-dom": "^15.2.1",
-    "reselect": "^2.5.3"
+    "react-redux": "^4.4.5",
+    "recompose": "^0.20.2",
+    "redux": "^3.5.2",
+    "reselect": "^2.5.3",
+    "updeep": "^0.16.1"
   },
   "standard": {
     "parser": "babel-eslint"
