@@ -1,5 +1,8 @@
+import * as Song from './Song'
 
-export const initialize = ({ song }) => {
+// -- Initializers --
+
+export const initialize = ({ song = Song.empty } = { }) => {
   return {
     song,
     view: { zoom: 1 }
