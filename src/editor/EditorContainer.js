@@ -1,96 +1,100 @@
 import React from 'react'
 import * as EditorViewModel from './EditorViewModel'
+import * as EditorState from '../editor-state/EditorState'
+import * as Song from '../editor-state/Song'
 import ScrollableArea from '../scrollable-area/ScrollableArea'
+import component from '../react-closure'
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
+import _ from 'lodash'
 
 import VerticalGrid from './VerticalGrid'
 import HorizontalGrid from './HorizontalGrid'
 import TrackGroupTitle from './TrackGroupTitle'
 import TrackTitle from './TrackTitle'
 
-export const EditorContainer = React.createClass({
-  getInitialState () {
-    this.selectColumnViewModel = ((x) => () => x)(
-      EditorViewModel.calculateColumnGroupsViewModel(
-        EditorViewModel.defaultColumnGroups
-      )
-    )
-    return null
-  },
-  getWidth () {
-    const viewModel = this.selectColumnViewModel()
-    return viewModel.width
-  },
-  getHeight () {
-    return 3600
-  },
-  renderContents () {
-    const viewModel = this.selectColumnViewModel()
-    return <div style={{ fontSize: 96 }}>
+const EditorContainer = connect(() => {
+  const selectSongLength = _.flow(EditorState.song, Song.length)
+  const selectZoomLevel = EditorState.zoomLevel
+
+  const selectGetHeight = createSelector(
+    selectSongLength, selectZoomLevel,
+    (songLength, zoomLevel) => {
+      const height = EditorViewModel.calculateEditorHeight({ songLength, zoomLevel })
+      return () => height
+    }
+  )
+
+  return (state) => {
+    return {
+      getHeight: selectGetHeight(state)
+    }
+  }
+})(component(() => {
+  const columnGroups = EditorViewModel.defaultColumnGroups
+  const columnViewModel = EditorViewModel.calculateColumnGroupsViewModel(columnGroups)
+  const getWidth = () => columnViewModel.width
+
+  function renderContents () {
+    return <div>
       <HorizontalGridContainer />
-      <VerticalGridContainer viewModel={viewModel} />
+      <VerticalGridContainer viewModel={columnViewModel} />
     </div>
-  },
-  renderOverlay (viewport) {
-    const viewModel = this.selectColumnViewModel()
+  }
+
+  const columns = columnViewModel.columnGroups.map((group, groupIndex) => (
+    <div key={groupIndex}>
+      <TrackGroupTitle
+        left={group.left}
+        width={group.width}
+        title={group.title}
+      />
+      {group.columns.map((column, columnIndex) => (
+        <TrackTitle
+          left={column.left}
+          width={column.width}
+          title={column.title}
+          key={columnIndex}
+        />
+      ))}
+    </div>
+  ))
+
+  function renderOverlay (viewport) {
     return <div>
       <div style={{ position: 'absolute', top: 0, left: -viewport.left }}>
-        {viewModel.columnGroups.map((group, groupIndex) => (
-          <div key={groupIndex}>
-            <TrackGroupTitle
-              left={group.left}
-              width={group.width}
-              title={group.title}
-            />
-            {group.columns.map((column, columnIndex) => (
-              <TrackTitle
-                left={column.left}
-                width={column.width}
-                title={column.title}
-              />
-            ))}
-          </div>
-        ))}
+        {columns}
       </div>
     </div>
-  },
-  render () {
+  }
+
+  return (props) => {
     return (
       <ScrollableArea
-        getWidth={this.getWidth}
-        getHeight={this.getHeight}
-        renderContents={this.renderContents}
-        renderOverlay={this.renderOverlay}
+        getWidth={getWidth}
+        getHeight={props.getHeight}
+        renderContents={renderContents}
+        renderOverlay={renderOverlay}
       />
     )
   }
+}))
+
+const HorizontalGridContainer = component(() => {
+  const element = (
+    <div>
+      {[ ...(function * () {
+        for (let i = 0; i <= 3600; i += 120) {
+          yield (<HorizontalGrid top={i} key={i} />)
+        }
+      }()) ]}
+    </div>
+  )
+  return () => element
 })
 
-const HorizontalGridContainer = React.createClass({
-  shouldComponentUpdate () {
-    return false // TODO
-  },
-  render () {
-    return (
-      <div>
-        {[ ...(function * () {
-          for (let i = 0; i <= 3600; i += 120) {
-            yield (<HorizontalGrid top={i} />)
-          }
-        }()) ]}
-      </div>
-    )
-  }
-})
-
-const VerticalGridContainer = React.createClass({
-  propTypes: {
-    viewModel: React.PropTypes.object
-  },
-  shouldComponentUpdate () {
-    return false // TODO
-  },
-  render () {
-    const viewModel = this.props.viewModel
+const VerticalGridContainer = component(() => {
+  return _.once(({ viewModel }) => {
     return (
       <div>
         {viewModel.columnGroups.map((group, groupIndex) => (
@@ -103,7 +107,7 @@ const VerticalGridContainer = React.createClass({
         ))}
       </div>
     )
-  }
+  })
 })
 
 export default EditorContainer

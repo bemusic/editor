@@ -1,4 +1,3 @@
-
 export function calculateColumnGroupsViewModel (groups) {
   const columnGroups = [ ]
   let currentX = 64
@@ -23,6 +22,10 @@ export function calculateColumnGroupsViewModel (groups) {
     currentX += 8
   }
   return { columnGroups, width: currentX }
+}
+
+export function calculateEditorHeight ({ songLength, zoomLevel }) {
+  return (songLength / 5 + 64 * 48) * zoomLevel
 }
 
 export const defaultColumnGroups = [
