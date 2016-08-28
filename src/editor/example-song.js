@@ -1,4 +1,3 @@
-
 import midiDataToSamplerRegion from '../midi-to-sampler-region/midiDataToSamplerRegion'
 import parseMidi from '../midi-reader/parseMidi'
 
@@ -8,7 +7,7 @@ export default function loadExampleSong (callback) {
   const samplerRegion = midiDataToSamplerRegion(midi)
   const song = {
     info: {
-      length: 3840
+      length: samplerRegion.l + 960 + 960 * 4
     },
     timing: {
       initialBPM: 140,

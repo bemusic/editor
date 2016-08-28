@@ -8,6 +8,7 @@
     "storybook": "start-storybook -p 9001",
     "lint": "eslint src",
     "dev": "webpack-dev-server --port 8999 --progress --inline --hot",
+    "dev:prod": "webpack-dev-server --port 8998 --progress --inline --hot --define=process.env.NODE_ENV='\"production\"'",
     "dev:test": "onchange 'src/**/*.js' -- npm test"
   },
   "nyc": {

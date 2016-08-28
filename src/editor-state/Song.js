@@ -21,4 +21,6 @@ export const empty = {
 
 // -- Queries --
 
-export const length = (song) => song.info.length
+export const yToBeat = (y) => y / 240
+export const lengthTicks = (song) => song.info.length
+export const lengthBeats = (song) => yToBeat(lengthTicks(song))

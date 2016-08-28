@@ -1,3 +1,5 @@
+import { flow, keys, map, sortBy, identity } from 'lodash/fp'
+
 export function calculateColumnGroupsViewModel (groups) {
   const columnGroups = [ ]
   let currentX = 64
@@ -24,8 +26,34 @@ export function calculateColumnGroupsViewModel (groups) {
   return { columnGroups, width: currentX }
 }
 
-export function calculateEditorHeight ({ songLength, zoomLevel }) {
-  return (songLength / 5 + 64 * 48) * zoomLevel
+export function calculateEditorHeight ({ songLengthBeats, zoomLevel }) {
+  return (songLengthBeats + 3) * 48 * zoomLevel
+}
+
+export function getBeatToTop ({ zoomLevel, editorHeight }) {
+  return (beat) => Math.round(editorHeight - 64 - beat * 48)
+}
+
+export function calculateGridlines ({
+  yToBeat,
+  beatToTop,
+  majorGridline,
+  minorGridline,
+  songLengthTicks
+}) {
+  const out = { }
+  const record = (y, type) => {
+    out[beatToTop(yToBeat(y))] = type
+  }
+  for (let i = 0; i < songLengthTicks; i += minorGridline) record(i, 'minor')
+  for (let i = 0; i < songLengthTicks; i += majorGridline) record(i, 'major')
+  for (let i = 0; i < songLengthTicks; i += 960) record(i, 'bar')
+  return flow(
+    keys,
+    map(key => +key),
+    sortBy(identity),
+    map(top => ({ top, type: out[top] }))
+  )(out)
 }
 
 export const defaultColumnGroups = [

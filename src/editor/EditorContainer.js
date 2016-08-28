@@ -1,46 +1,75 @@
-import React from 'react'
-import * as EditorViewModel from './EditorViewModel'
 import * as EditorState from '../editor-state/EditorState'
 import * as Song from '../editor-state/Song'
-import ScrollableArea from '../scrollable-area/ScrollableArea'
-import component from '../react-closure'
+import * as EditorViewModel from './EditorViewModel'
+
+import _ from 'lodash'
+import React from 'react'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import _ from 'lodash'
 
-import VerticalGrid from './VerticalGrid'
+import component from '../react-closure'
 import HorizontalGrid from './HorizontalGrid'
+import ScrollableArea from '../scrollable-area/ScrollableArea'
 import TrackGroupTitle from './TrackGroupTitle'
 import TrackTitle from './TrackTitle'
+import VerticalGrid from './VerticalGrid'
 
 const EditorContainer = connect(() => {
-  const selectSongLength = _.flow(EditorState.song, Song.length)
+  const selectSong = EditorState.song
+  const selectSongLengthTicks = _.flow(selectSong, Song.lengthTicks)
+  const selectSongLengthBeats = _.flow(selectSong, Song.lengthBeats)
   const selectZoomLevel = EditorState.zoomLevel
 
-  const selectGetHeight = createSelector(
-    selectSongLength, selectZoomLevel,
-    (songLength, zoomLevel) => {
-      const height = EditorViewModel.calculateEditorHeight({ songLength, zoomLevel })
-      return () => height
+  const selectHeight = createSelector(
+    selectSongLengthBeats, selectZoomLevel,
+    (songLengthBeats, zoomLevel) => {
+      const height = EditorViewModel.calculateEditorHeight({
+        songLengthBeats,
+        zoomLevel
+      })
+      return height
     }
+  )
+
+  const selectBeatToTop = createSelector(
+    selectHeight, selectZoomLevel,
+    (height, zoomLevel) => EditorViewModel.getBeatToTop({
+      zoomLevel,
+      editorHeight: height
+    })
+  )
+
+  const selectGridlines = createSelector(
+    selectHeight, selectBeatToTop, selectSongLengthTicks,
+    (height, beatToTop, songLengthTicks) => EditorViewModel.calculateGridlines({
+      beatToTop,
+      yToBeat: Song.yToBeat,
+      majorGridline: 240,
+      minorGridline: 60,
+      songLengthTicks: songLengthTicks
+    })
   )
 
   return (state) => {
     return {
-      getHeight: selectGetHeight(state)
+      height: selectHeight(state),
+      gridlines: selectGridlines(state)
     }
   }
 })(component(() => {
   const columnGroups = EditorViewModel.defaultColumnGroups
   const columnViewModel = EditorViewModel.calculateColumnGroupsViewModel(columnGroups)
   const getWidth = () => columnViewModel.width
+  const selectGetHeight = (props) => () => props.height
 
-  function renderContents () {
-    return <div>
-      <HorizontalGridContainer />
+  const selectGridlines = (props) => props.gridlines
+  const selectRenderContents = createSelector(
+    selectGridlines,
+    (gridlines) => (viewport) => <div>
+      <HorizontalGridContainer gridlines={gridlines} viewport={viewport} />
       <VerticalGridContainer viewModel={columnViewModel} />
     </div>
-  }
+  )
 
   const columns = columnViewModel.columnGroups.map((group, groupIndex) => (
     <div key={groupIndex}>
@@ -72,8 +101,8 @@ const EditorContainer = connect(() => {
     return (
       <ScrollableArea
         getWidth={getWidth}
-        getHeight={props.getHeight}
-        renderContents={renderContents}
+        getHeight={selectGetHeight(props)}
+        renderContents={selectRenderContents(props)}
         renderOverlay={renderOverlay}
       />
     )
@@ -81,16 +110,41 @@ const EditorContainer = connect(() => {
 }))
 
 const HorizontalGridContainer = component(() => {
-  const element = (
-    <div>
-      {[ ...(function * () {
-        for (let i = 0; i <= 3600; i += 120) {
-          yield (<HorizontalGrid top={i} key={i} />)
-        }
-      }()) ]}
-    </div>
+  const BATCH_SIZE = 256
+  const selectStartBatchNumber = (props) => (
+    Math.floor((props.viewport.top - BATCH_SIZE) / BATCH_SIZE)
   )
-  return () => element
+  const selectBatchCount = (props) => (
+    Math.ceil(props.viewport.height / BATCH_SIZE) + 2
+  )
+  const selectGridlines = (props) => props.gridlines
+  const selectGetBatch = createSelector(
+    selectGridlines,
+    (gridlines) => _.memoize((batchNumber) => {
+      const begin = BATCH_SIZE * batchNumber
+      const end = BATCH_SIZE * (batchNumber + 1)
+      const beginIndex = _.sortedIndexBy(gridlines, { top: begin }, 'top')
+      const endIndex = _.sortedIndexBy(gridlines, { top: end }, 'top')
+      return <div key={batchNumber} data-horizontal-grid-batch-number={batchNumber}>
+        {gridlines.slice(beginIndex, endIndex).map((line) =>
+          <HorizontalGrid top={line.top} key={line.top} type={line.type} />
+        )}
+      </div>
+    })
+  )
+  const selectVisibleBatches = createSelector(
+    selectStartBatchNumber, selectBatchCount, selectGetBatch,
+    (start, count, getBatch) => {
+      const out = [ ]
+      for (let i = start; i <= start + count; i++) out.push(getBatch(i))
+      return out
+    }
+  )
+  return (props) => {
+    return <div>
+      {selectVisibleBatches(props)}
+    </div>
+  }
 })
 
 const VerticalGridContainer = component(() => {
