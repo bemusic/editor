@@ -24,7 +24,7 @@ export const Note = pure(function Note ({ x, y, width, height, hue }) {
       top: y,
       width: width,
       height: height,
-      background: `linear-gradient(to top, hsla(${hue}, 50%, 72%, 0.5), hsl(${hue}, 50%, 72%))`
+      background: `linear-gradient(to bottom, hsla(${hue}, 50%, 72%, 0.32), hsl(${hue}, 50%, 72%))`
     }}
   >
   </div>

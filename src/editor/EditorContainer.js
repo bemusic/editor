@@ -8,13 +8,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
-import component from '../react-closure'
 import HorizontalGrid from './HorizontalGrid'
 import SamplerRegionViewContainer from '../sampler-region/SamplerRegionViewContainer'
 import ScrollableArea from '../scrollable-area/ScrollableArea'
 import TrackGroupTitle from './TrackGroupTitle'
 import TrackTitle from './TrackTitle'
 import VerticalGrid from './VerticalGrid'
+import { component, selectProp } from '../react-closure'
 
 const EditorContainer = connect(() => {
   const selectSong = EditorState.song
@@ -63,14 +63,12 @@ const EditorContainer = connect(() => {
 })(component(() => {
   const columnGroups = EditorViewModel.defaultColumnGroups
   const columnViewModel = EditorViewModel.calculateColumnGroupsViewModel(columnGroups)
-  const getWidth = () => columnViewModel.width
-  const selectGetHeight = (props) => () => props.height
-  const selectGridlines = (props) => props.gridlines
-  const selectSong = (props) => props.song
-  const selectBeatToTop = (props) => props.beatToTop
+  const selectWidth = () => columnViewModel.width
 
   const selectRenderContents = createSelector(
-    selectGridlines, selectSong, selectBeatToTop,
+    selectProp('gridlines'),
+    selectProp('song'),
+    selectProp('beatToTop'),
     (gridlines, song, beatToTop) => (viewport) => <div>
       <HorizontalGridContainer gridlines={gridlines} viewport={viewport} />
       <VerticalGridContainer viewModel={columnViewModel} />
@@ -82,7 +80,6 @@ const EditorContainer = connect(() => {
       />
     </div>
   )
-
   const columns = columnViewModel.columnGroups.map((group, groupIndex) => (
     <div key={groupIndex}>
       <TrackGroupTitle
@@ -101,7 +98,7 @@ const EditorContainer = connect(() => {
     </div>
   ))
 
-  function renderOverlay (viewport) {
+  const renderOverlay = (viewport) => {
     return <div>
       <div style={{ position: 'absolute', top: 0, left: -viewport.left }}>
         {columns}
@@ -109,16 +106,23 @@ const EditorContainer = connect(() => {
     </div>
   }
 
-  return (props) => {
-    return (
-      <ScrollableArea
+  const selectElement = createSelector(
+    selectWidth,
+    selectProp('height'),
+    selectRenderContents,
+    (width, height, renderContents) => {
+      const getWidth = () => width
+      const getHeight = () => height
+      return <ScrollableArea
         getWidth={getWidth}
-        getHeight={selectGetHeight(props)}
-        renderContents={selectRenderContents(props)}
+        getHeight={getHeight}
+        renderContents={renderContents}
         renderOverlay={renderOverlay}
       />
-    )
-  }
+    }
+  )
+
+  return selectElement
 }))
 
 const HorizontalGridContainer = component(() => {
@@ -179,7 +183,6 @@ const VerticalGridContainer = component(() => {
 const MusicObjectContainer = component(() => {
   return ({ song, columnViewModel, beatToTop, yToBeat }) => {
     const musicRegions = Song.getMusicRegions(song)
-    console.log(musicRegions)
     return (
       <div data-type="MusicObjectContainer">
         {musicRegions.map((region, index) => {
