@@ -9,6 +9,7 @@ import { createSelector } from 'reselect'
 
 import component from '../react-closure'
 import HorizontalGrid from './HorizontalGrid'
+import SamplerRegionViewContainer from '../sampler-region/SamplerRegionViewContainer'
 import ScrollableArea from '../scrollable-area/ScrollableArea'
 import TrackGroupTitle from './TrackGroupTitle'
 import TrackTitle from './TrackTitle'
@@ -52,6 +53,7 @@ const EditorContainer = connect(() => {
 
   return (state) => {
     return {
+      song: selectSong(state),
       height: selectHeight(state),
       gridlines: selectGridlines(state)
     }
@@ -61,13 +63,15 @@ const EditorContainer = connect(() => {
   const columnViewModel = EditorViewModel.calculateColumnGroupsViewModel(columnGroups)
   const getWidth = () => columnViewModel.width
   const selectGetHeight = (props) => () => props.height
-
   const selectGridlines = (props) => props.gridlines
+  const selectSong = (props) => props.song
+
   const selectRenderContents = createSelector(
-    selectGridlines,
-    (gridlines) => (viewport) => <div>
+    selectGridlines, selectSong,
+    (gridlines, song) => (viewport) => <div>
       <HorizontalGridContainer gridlines={gridlines} viewport={viewport} />
       <VerticalGridContainer viewModel={columnViewModel} />
+      <MusicObjectContainer columnViewModel={columnViewModel} song={song} />
     </div>
   )
 
@@ -162,6 +166,17 @@ const VerticalGridContainer = component(() => {
       </div>
     )
   })
+})
+
+const MusicObjectContainer = component(() => {
+  return ({ song, columnViewModel }) => {
+    const regions = Song.getMusicRegions(song)
+    return (
+      <div>
+        {require('util').inspect(regions)}
+      </div>
+    )
+  }
 })
 
 export default EditorContainer

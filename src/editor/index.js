@@ -37,6 +37,7 @@ void (function () {
   const reporter = createFPSReporter()
   const ReactReconciler = require('react/lib/ReactReconciler')
   let count = 0
+  let updating = false
   const profile = (original) => function () {
     count++
     if (updating) {
@@ -56,7 +57,6 @@ void (function () {
       count = 0
     }
   }
-  let updating = false
   ReactReconciler.mountComponent = profile(ReactReconciler.mountComponent)
   ReactReconciler.receiveComponent = profile(ReactReconciler.receiveComponent)
   ReactReconciler.unmountComponent = profile(ReactReconciler.unmountComponent)
