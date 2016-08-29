@@ -1,51 +1,50 @@
-import SamplerRegionView, { Note } from './SamplerRegionView'
-import { createSelector } from 'reselect'
-import React from 'react'
 import * as SamplerRegionViewModel from './SamplerRegionViewModel'
 
-export const SamplerRegionViewContainer = React.createClass({
-  propTypes: {
-    samplerRegion: React.PropTypes.object,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    hue: React.PropTypes.number
-  },
-  getInitialState () {
-    this.selectViewModel = createSelector(
-      () => this.props.samplerRegion,
-      () => this.props.width,
-      () => this.props.height,
-      (samplerRegion, width, height) => (
-        SamplerRegionViewModel.getViewModel(samplerRegion, width, height)
-      )
+import React from 'react'
+import { createSelector } from 'reselect'
+
+import SamplerRegionView, { Note } from './SamplerRegionView'
+import { component, selectProp } from '../react-closure'
+
+export const SamplerRegionViewContainer = component(() => {
+  const selectViewModel = createSelector(
+    selectProp('samplerRegion'),
+    selectProp('width'),
+    selectProp('height'),
+    (samplerRegion, width, height) => (
+      SamplerRegionViewModel.getViewModel(samplerRegion, { width, height })
     )
-    this.selectNotes = createSelector(
-      () => this.selectViewModel().notes,
-      () => this.props.hue,
-      (noteViewModels, hue) => noteViewModels.map(note => (
-        <Note
-          x={note.left}
-          y={note.top}
-          width={note.width}
-          height={note.height}
-          hue={hue}
-        />
-      ))
-    )
-    return null
-  },
-  render () {
-    const { width, height, hue } = this.props
-    return (
+  )
+  const selectNotes = createSelector(
+    selectProp('hue'),
+    selectViewModel,
+    (hue, viewModel) => viewModel.notes.map((note, index) => (
+      <Note
+        x={note.left}
+        y={note.top}
+        width={note.width}
+        height={note.height}
+        hue={hue}
+        key={index}
+      />
+    ))
+  )
+  const selectView = createSelector(
+    selectProp('width'),
+    selectProp('height'),
+    selectProp('hue'),
+    selectNotes,
+    (width, height, hue, notes) => (
       <SamplerRegionView
         width={width}
         height={height}
         hue={hue}
       >
-        {this.renderNotes(this.props)}
+        {notes}
       </SamplerRegionView>
     )
-  }
+  )
+  return selectView
 })
 
 export default SamplerRegionViewContainer

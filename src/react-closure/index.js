@@ -12,4 +12,8 @@ export function component (initialize) {
   }
 }
 
+export function selectProp (propName) {
+  return (props) => props[propName]
+}
+
 export default component

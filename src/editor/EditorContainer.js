@@ -1,6 +1,7 @@
 import * as EditorState from '../editor-state/EditorState'
 import * as Song from '../editor-state/Song'
 import * as EditorViewModel from './EditorViewModel'
+import * as MusicRegionData from './MusicRegionData'
 
 import _ from 'lodash'
 import React from 'react'
@@ -55,7 +56,8 @@ const EditorContainer = connect(() => {
     return {
       song: selectSong(state),
       height: selectHeight(state),
-      gridlines: selectGridlines(state)
+      gridlines: selectGridlines(state),
+      beatToTop: selectBeatToTop(state)
     }
   }
 })(component(() => {
@@ -65,13 +67,19 @@ const EditorContainer = connect(() => {
   const selectGetHeight = (props) => () => props.height
   const selectGridlines = (props) => props.gridlines
   const selectSong = (props) => props.song
+  const selectBeatToTop = (props) => props.beatToTop
 
   const selectRenderContents = createSelector(
-    selectGridlines, selectSong,
-    (gridlines, song) => (viewport) => <div>
+    selectGridlines, selectSong, selectBeatToTop,
+    (gridlines, song, beatToTop) => (viewport) => <div>
       <HorizontalGridContainer gridlines={gridlines} viewport={viewport} />
       <VerticalGridContainer viewModel={columnViewModel} />
-      <MusicObjectContainer columnViewModel={columnViewModel} song={song} />
+      <MusicObjectContainer
+        columnViewModel={columnViewModel}
+        song={song}
+        yToBeat={Song.yToBeat}
+        beatToTop={beatToTop}
+      />
     </div>
   )
 
@@ -169,11 +177,31 @@ const VerticalGridContainer = component(() => {
 })
 
 const MusicObjectContainer = component(() => {
-  return ({ song, columnViewModel }) => {
-    const regions = Song.getMusicRegions(song)
+  return ({ song, columnViewModel, beatToTop, yToBeat }) => {
+    const musicRegions = Song.getMusicRegions(song)
+    console.log(musicRegions)
     return (
-      <div>
-        {require('util').inspect(regions)}
+      <div data-type="MusicObjectContainer">
+        {musicRegions.map((region, index) => {
+          const startTop = beatToTop(yToBeat(region.y))
+          const endTop = beatToTop(yToBeat(MusicRegionData.length(region.data)))
+          const top = Math.min(startTop, endTop)
+          const height = Math.max(startTop, endTop) - top
+          if (MusicRegionData.isSamplerRegion(region.data)) {
+            return (
+              <div style={{ position: 'absolute', top: top }} key={index}>
+                <SamplerRegionViewContainer
+                  width={60}
+                  height={height}
+                  hue={0}
+                  samplerRegion={MusicRegionData.getSamplerRegion(region.data)}
+                />
+              </div>
+            )
+          } else {
+            return null
+          }
+        })}
       </div>
     )
   }

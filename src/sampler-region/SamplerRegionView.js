@@ -1,4 +1,5 @@
 import React from 'react'
+import { pure } from 'recompose'
 
 export function SamplerRegionView ({ width, height, hue, children }) {
   return <div
@@ -15,7 +16,7 @@ export function SamplerRegionView ({ width, height, hue, children }) {
   </div>
 }
 
-export function Note ({ x, y, width, height, hue }) {
+export const Note = pure(function Note ({ x, y, width, height, hue }) {
   return <div
     style={{
       position: 'absolute',
@@ -23,10 +24,10 @@ export function Note ({ x, y, width, height, hue }) {
       top: y,
       width: width,
       height: height,
-      background: `hsl(${hue}, 50%, 72%)`
+      background: `linear-gradient(to top, hsla(${hue}, 50%, 72%, 0.5), hsl(${hue}, 50%, 72%))`
     }}
   >
   </div>
-}
+})
 
 export default SamplerRegionView

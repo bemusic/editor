@@ -1,6 +1,7 @@
-import _ from 'lodash'
-import * as SamplerRegion from './SamplerRegion'
 import * as Note from './Note'
+import * as SamplerRegion from './SamplerRegion'
+
+import _ from 'lodash'
 
 export function getViewModel (samplerRegion, {
   width,
