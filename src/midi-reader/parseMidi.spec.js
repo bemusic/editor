@@ -1,13 +1,12 @@
 import * as MIDIData from '../midi-data/MIDIData'
-import parseMidi, { createNoteBuffer } from './parseMidi'
-import fs from 'fs'
-import path from 'path'
+
 import assert from 'assert'
+
+import parseMidi, { createNoteBuffer } from './parseMidi'
 
 describe('the MIDI file parser', function () {
   it('should extract notes out of a midi file', () => {
-    const buffer = fs.readFileSync(path.resolve(__dirname, 'test-fixtures', 'lead.mid'))
-    const arrayBuffer = new Uint8Array(buffer).buffer
+    const arrayBuffer = require('./test-fixtures/lead.mid')
     const result = parseMidi(arrayBuffer)
     const notes = MIDIData.getNotes(result)
     const ppqn = MIDIData.getPPQN(result)

@@ -31,7 +31,7 @@ describe('editor height', function () {
     assert.equal(EditorViewModel.calculateEditorHeight({
       songLengthBeats: 4 * 20,
       zoomLevel: 1
-    }), 192 * 20 + 2 * 48)
+    }), 192 * 20 + 3 * 48)
   })
 })
 

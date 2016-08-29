@@ -1,13 +1,12 @@
-import parseMidi from '../midi-reader/parseMidi'
 import _ from 'lodash'
-import midiDataToSamplerRegion from './midiDataToSamplerRegion'
-import fs from 'fs'
-import path from 'path'
 import assert from 'assert'
+
+import midiDataToSamplerRegion from './midiDataToSamplerRegion'
+import parseMidi from '../midi-reader/parseMidi'
 
 describe('converting a MIDI data to sampler region', function () {
   const getFixture = _.once(() => {
-    const buffer = fs.readFileSync(path.resolve(__dirname, '..', 'midi-reader', 'test-fixtures', 'piano.mid'))
+    const buffer = require('../midi-reader/test-fixtures/piano.mid')
     const arrayBuffer = new Uint8Array(buffer).buffer
     const midiData = parseMidi(arrayBuffer)
     return midiDataToSamplerRegion(midiData, 240)

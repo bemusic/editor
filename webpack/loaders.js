@@ -9,5 +9,9 @@ module.exports = [
   {
     test: /\.css$/,
     loader: 'style!css'
+  },
+  {
+    test: /\.mid$/,
+    loader: 'arraybuffer-loader'
   }
 ]

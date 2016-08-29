@@ -2,7 +2,7 @@ import midiDataToSamplerRegion from '../midi-to-sampler-region/midiDataToSampler
 import parseMidi from '../midi-reader/parseMidi'
 
 export default function loadExampleSong (callback) {
-  const data = require('arraybuffer!../midi-to-sampler-region/test-fixtures/drum.mid')
+  const data = require('../midi-to-sampler-region/test-fixtures/drum.mid')
   const midi = parseMidi(data)
   const samplerRegion = midiDataToSamplerRegion(midi)
   const song = {
