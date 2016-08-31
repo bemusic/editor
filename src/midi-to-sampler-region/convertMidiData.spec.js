@@ -13,10 +13,15 @@ describe('converting a MIDI data to sampler region', function () {
 
   describe('the resulting keysounds', function () {
     describe('when slicing normally', function () {
-      xit('should result in each unique note being unique keysound', () => {
+      it('should result in each unique note being unique keysound', () => {
         const result = convert(require('./test-fixtures/no-velocity-difference.mid'))
         assert.equal(numberOfNotes(result), 9)
         assert.equal(numberOfKeysounds(result), 8)
+      })
+      it('should take into consideration the velocity of the note', () => {
+        const result = convert(require('./test-fixtures/with-velocity-difference.mid'))
+        assert.equal(numberOfNotes(result), 9)
+        assert.equal(numberOfKeysounds(result), 9)
       })
     })
   })
