@@ -181,20 +181,41 @@ const VerticalGridContainer = component(() => {
 })
 
 const MusicObjectContainer = component(() => {
-  return ({ song, columnViewModel, beatToTop, yToBeat }) => {
+  const COLUMN_NOT_FOUND = { left: -1000, width: 64 }
+  const selectColumnMapping = createSelector(
+    selectProp('columnViewModel'),
+    (columnViewModel) => {
+      const columns = _.flatten(_.map(columnViewModel.columnGroups, 'columns'))
+      const musicColumns = _.filter(columns, { info: { type: 'music' } })
+      const mapping = _.keyBy(musicColumns, 'info.track')
+      return (track) => {
+        const found = mapping[track]
+        if (found) {
+          return mapping[track]
+        } else {
+          console.warn('[MusicObjectContainer] cannot find music column mapping for track "%s"', track)
+          return COLUMN_NOT_FOUND
+        }
+      }
+    }
+  )
+  return (props) => {
+    const { song, beatToTop, yToBeat } = props
     const musicRegions = Song.getMusicRegions(song)
+    const columnMapping = selectColumnMapping(props)
     return (
       <div data-type="MusicObjectContainer">
         {musicRegions.map((region, index) => {
-          const startTop = beatToTop(yToBeat(region.y))
-          const endTop = beatToTop(yToBeat(MusicRegionData.length(region.data)))
+          const startTop = beatToTop(yToBeat(region.y)) + 1
+          const endTop = beatToTop(yToBeat(region.y + MusicRegionData.length(region.data))) + 1
           const top = Math.min(startTop, endTop)
           const height = Math.max(startTop, endTop) - top
+          const { left, width } = columnMapping(region.track)
           if (MusicRegionData.isSamplerRegion(region.data)) {
             return (
-              <div style={{ position: 'absolute', top: top }} key={index}>
+              <div style={{ position: 'absolute', top, left: left + 1 }} key={region.id}>
                 <SamplerRegionViewContainer
-                  width={60}
+                  width={width - 1}
                   height={height}
                   hue={0}
                   samplerRegion={MusicRegionData.getSamplerRegion(region.data)}

@@ -19,11 +19,11 @@ export default function loadExampleSong (callback) {
         author: 'flicknote'
       },
       notes: [
-        { y: 960, x: 0, musicTrack: 1 },
-        { y: 960, x: 7, musicTrack: 2 },
-        { y: 1200, x: 3, musicTrack: 2 },
-        { y: 1440, x: 5, musicTrack: 2 },
-        { y: 1680, x: 3, musicTrack: 2 }
+        { id: 'a', y: 960, x: 0, musicTrack: 1 },
+        { id: 'b', y: 960, x: 7, musicTrack: 2 },
+        { id: 'c', y: 1200, x: 3, musicTrack: 2 },
+        { id: 'd', y: 1440, x: 5, musicTrack: 2 },
+        { id: 'e', y: 1680, x: 3, musicTrack: 2 }
       ]
     },
     music: {
@@ -34,6 +34,7 @@ export default function loadExampleSong (callback) {
       },
       regions: [
         {
+          id: '1',
           track: 1,
           y: 960,
           data: {
@@ -46,6 +47,7 @@ export default function loadExampleSong (callback) {
           }
         },
         {
+          id: '2',
           track: 2,
           y: 960,
           data: {
@@ -62,6 +64,7 @@ export default function loadExampleSong (callback) {
           }
         },
         {
+          id: '3',
           track: 5,
           y: 960,
           data: {

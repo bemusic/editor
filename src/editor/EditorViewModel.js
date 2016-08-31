@@ -12,7 +12,8 @@ export function calculateColumnGroupsViewModel (groups) {
       columns.push({
         left: columnStartX,
         width: currentX - columnStartX,
-        title: column.title
+        title: column.title,
+        info: column.info
       })
     }
     columnGroups.push({
@@ -81,22 +82,22 @@ export const defaultColumnGroups = [
   {
     title: '音楽',
     columns: [
-      { width: 64, title: '1' },
-      { width: 64, title: '2' },
-      { width: 64, title: '3' },
-      { width: 64, title: '4' },
-      { width: 64, title: '5' },
-      { width: 64, title: '6' },
-      { width: 64, title: '7' },
-      { width: 64, title: '8' },
-      { width: 64, title: '9' },
-      { width: 64, title: '10' },
-      { width: 64, title: '11' },
-      { width: 64, title: '12' },
-      { width: 64, title: '13' },
-      { width: 64, title: '14' },
-      { width: 64, title: '15' },
-      { width: 64, title: '16' }
+      { info: { type: 'music', track: 1 }, width: 64, title: '1' },
+      { info: { type: 'music', track: 2 }, width: 64, title: '2' },
+      { info: { type: 'music', track: 3 }, width: 64, title: '3' },
+      { info: { type: 'music', track: 4 }, width: 64, title: '4' },
+      { info: { type: 'music', track: 5 }, width: 64, title: '5' },
+      { info: { type: 'music', track: 6 }, width: 64, title: '6' },
+      { info: { type: 'music', track: 7 }, width: 64, title: '7' },
+      { info: { type: 'music', track: 8 }, width: 64, title: '8' },
+      { info: { type: 'music', track: 9 }, width: 64, title: '9' },
+      { info: { type: 'music', track: 10 }, width: 64, title: '10' },
+      { info: { type: 'music', track: 11 }, width: 64, title: '11' },
+      { info: { type: 'music', track: 12 }, width: 64, title: '12' },
+      { info: { type: 'music', track: 13 }, width: 64, title: '13' },
+      { info: { type: 'music', track: 14 }, width: 64, title: '14' },
+      { info: { type: 'music', track: 15 }, width: 64, title: '15' },
+      { info: { type: 'music', track: 16 }, width: 64, title: '16' }
     ]
   }
 ]
