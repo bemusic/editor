@@ -23,6 +23,33 @@ describe('converting a MIDI data to sampler region', function () {
         assert.equal(numberOfNotes(result), 9)
         assert.equal(numberOfKeysounds(result), 9)
       })
+      it('should result in another midi file', () => {
+        const result = convert(require('./test-fixtures/with-velocity-difference.mid'))
+        const actualEvents = resultingMidiFileEvents(result)
+        const expectedEvents = [
+          '0 note_on 58 98',
+          '120 note_off 58 98',
+          '480 note_on 58 98',
+          '1080 note_on 58 98',
+          '480 note_on 60 98',
+          '120 note_off 60 98',
+          '480 note_on 65 98',
+          '120 note_off 65 98',
+          '480 note_on 65 98',
+          '1080 note_on 65 98',
+          '480 note_on 70 63',
+          '120 note_off 70 63',
+          '480 note_on 70 98',
+          '120 note_on 70 98',
+          '480 note_on 72 98',
+          '120 note_on 72 98',
+          '480 note_on 74 98',
+          '120 note_on 74 98',
+          'end of track'
+        ]
+        assert.equal(actualEvents.length, expectedEvents.length)
+        // TODO: make sure each event matches
+      })
     })
   })
 })
@@ -38,4 +65,8 @@ function numberOfNotes (result) {
 
 function numberOfKeysounds (result) {
   return result.slices.length
+}
+
+function resultingMidiFileEvents (result) {
+  return result.midiFiles[0].midiFile.getTrackEvents(0)
 }
