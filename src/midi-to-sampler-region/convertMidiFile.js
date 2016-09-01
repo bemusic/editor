@@ -59,13 +59,74 @@ export function convertMidiFile (midi, resolution = 240, {
   }
 }
 
+const normalSlicer = ({ spacing }) => (monitor) => {
+  const startPulse = monitor.getCurrentPulse()
+  let endPulse = startPulse
+  const events = [ ]
+  const activeNotes = [ ]
+  const slice = {
+    shouldAcceptNoteOn (event) {
+      return false // each note gets its own slice, ok?
+    },
+    shouldAcceptNoteOff (event) {
+      return _.some(activeNotes, { note: event.param1, channel: event.channel })
+    },
+    receiveEvent (event) {
+      const currentPulse = monitor.getCurrentPulse()
+      events.push({
+        pulseOffset: currentPulse - startPulse,
+        data: event
+      })
+      endPulse = currentPulse
+      if (isNoteOn(event)) {
+        activeNotes.push({ note: event.param1, channel: event.channel })
+      } else if (isNoteOff(event)) {
+        const note = _.find(activeNotes, { note: event.param1, channel: event.channel })
+        if (note) _.pull(activeNotes, note)
+      }
+    },
+    shouldDestroy () {
+      return activeNotes.length === 0
+    },
+    build () {
+      const keyify = (value) => ('00000000' + value.toString(16)).substr(-8)
+      const sortKey = [
+        events[0].data.channel,
+        events[0].data.param1,
+        events[0].data.param2,
+        endPulse - startPulse
+      ].map(keyify).join(':')
+      invariant(events.length >= 2, 'Expected at least two events in %s', JSON.stringify(events))
+
+      return {
+        key: events[0].data.param1,
+        rightPadding: spacing,
+        sortKey,
+        uniqueKey: sortKey,
+        startPulse,
+        endPulse,
+        events
+      }
+    }
+  }
+  return slice
+}
+
 function createSlicesBuilder ({ spacing }) {
+  const createSliceBuilder = normalSlicer({ spacing })
   let currentPulse = 0
   let currentTime = 0
   const sliceBuilders = [ ]
   const activeSliceBuilders = new Set()
 
-  void currentTime
+  const monitor = {
+    getCurrentPulse () {
+      return currentPulse
+    },
+    getCurrentTime () {
+      return currentTime
+    }
+  }
 
   return {
     handleEvent (event) {
@@ -73,11 +134,23 @@ function createSlicesBuilder ({ spacing }) {
       currentTime = event.playTime
 
       if (isNoteOn(event)) {
-        const slice = getSliceBuilderAcceptingNoteOn(event) || createNewSliceBuilder()
-        slice.receiveEvent(event)
+        const slice = getSliceBuilderAcceptingNoteOn(event)
+        if (slice) {
+          slice.receiveEvent(event)
+        } else {
+          const newSlice = createSliceBuilder(monitor)
+          newSlice.receiveEvent(event)
+          sliceBuilders.push(newSlice)
+          activeSliceBuilders.add(newSlice)
+        }
       } else if (isNoteOff(event)) {
         const slice = getSliceBuilderAcceptingNoteOff(event)
-        if (slice) slice.receiveEvent(event)
+        if (slice) {
+          slice.receiveEvent(event)
+          if (slice.shouldDestroy()) {
+            activeSliceBuilders.delete(slice)
+          }
+        }
       }
     },
     build () {
@@ -94,60 +167,6 @@ function createSlicesBuilder ({ spacing }) {
     return null
   }
 
-  function createNewSliceBuilder () {
-    const startPulse = currentPulse
-    let endPulse = startPulse
-    const events = [ ]
-    const activeNotes = [ ]
-    const slice = {
-      shouldAcceptNoteOn (event) {
-        return false // each note gets its own slice, ok?
-      },
-      shouldAcceptNoteOff (event) {
-        return _.some(activeNotes, { note: event.param1, channel: event.channel })
-      },
-      receiveEvent (event) {
-        events.push({
-          pulseOffset: currentPulse - startPulse,
-          data: event
-        })
-        endPulse = currentPulse
-        if (isNoteOn(event)) {
-          activeNotes.push({ note: event.param1, channel: event.channel })
-        } else if (isNoteOff(event)) {
-          const note = _.find(activeNotes, { note: event.param1, channel: event.channel })
-          if (note) _.pull(activeNotes, note)
-        }
-        if (activeNotes.length === 0) {
-          activeSliceBuilders.delete(slice)
-        }
-      },
-      build () {
-        const keyify = (value) => ('00000000' + value.toString(16)).substr(-8)
-        const sortKey = [
-          events[0].data.channel,
-          events[0].data.param1,
-          events[0].data.param2,
-          endPulse - startPulse
-        ].map(keyify).join(':')
-        invariant(events.length >= 2, 'Expected at least two events in %s', JSON.stringify(events))
-
-        return {
-          key: events[0].data.param1,
-          rightPadding: spacing,
-          sortKey,
-          uniqueKey: sortKey,
-          startPulse,
-          endPulse,
-          events
-        }
-      }
-    }
-    sliceBuilders.push(slice)
-    activeSliceBuilders.add(slice)
-    return slice
-  }
-
   function getSliceBuilderAcceptingNoteOff (event) {
     for (const slice of activeSliceBuilders) {
       if (slice.shouldAcceptNoteOff(event)) {
@@ -156,24 +175,24 @@ function createSlicesBuilder ({ spacing }) {
     }
     return null
   }
+}
 
-  function isNoteOn (event) {
-    return (
-      event.type === MIDIEvents.EVENT_MIDI &&
-      event.subtype === MIDIEvents.EVENT_MIDI_NOTE_ON &&
-      event.param2 > 0
-    )
-  }
+function isNoteOn (event) {
+  return (
+    event.type === MIDIEvents.EVENT_MIDI &&
+    event.subtype === MIDIEvents.EVENT_MIDI_NOTE_ON &&
+    event.param2 > 0
+  )
+}
 
-  function isNoteOff (event) {
-    return (
-      event.type === MIDIEvents.EVENT_MIDI &&
-      (
-        (event.subtype === MIDIEvents.EVENT_MIDI_NOTE_ON && event.param2 === 0) ||
-        event.subtype === MIDIEvents.EVENT_MIDI_NOTE_OFF
-      )
+function isNoteOff (event) {
+  return (
+    event.type === MIDIEvents.EVENT_MIDI &&
+    (
+      (event.subtype === MIDIEvents.EVENT_MIDI_NOTE_ON && event.param2 === 0) ||
+      event.subtype === MIDIEvents.EVENT_MIDI_NOTE_OFF
     )
-  }
+  )
 }
 
 export default convertMidiFile
