@@ -6,7 +6,9 @@ import _ from 'lodash'
 import MIDIEvents from 'midievents'
 import MIDIFile from 'midifile'
 
-export function convertMidiData (midiData, resolution = 240) {
+export function convertMidiData (midiData, resolution = 240, {
+  spacing = 480
+} = { }) {
   const midiNotes = MIDIData.getNotes(midiData)
   const calculateBeat = MIDIData.getBeatCalculator(midiData)
   const pulseToY = (pulse) => Math.round(resolution * calculateBeat(pulse))
@@ -36,7 +38,7 @@ export function convertMidiData (midiData, resolution = 240) {
       param1: slice[0].key,
       param2: slice[0].velocity
     })
-    nextDelta = 480
+    nextDelta = spacing
   }
   events.push({
     delta: 0,

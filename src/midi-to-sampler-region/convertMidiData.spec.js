@@ -45,17 +45,32 @@ describe('converting a MIDI data to sampler region', function () {
           '480 note_on 72 98',
           '120 note_off 72 98',
           '480 note_on 74 98',
-          '120 note_off 74 98',
-          '0 end of track'
+          '120 note_off 74 98'
+        ])
+      })
+      it('should allow adjusting the spacing', () => {
+        const result = convert(require('./test-fixtures/brass.mid'), {
+          spacing: 60
+        })
+        const actualEvents = resultingMidiFileEvents(result)
+        assertMidiEvents(actualEvents, [
+          '0 note_on 59 127',
+          '120 note_off 59 127',
+          '60 note_on 61 127',
+          '60 note_off 61 127',
+          '60 note_on 66 127',
+          '180 note_off 66 127'
         ])
       })
     })
   })
 })
 
-function convert (arrayBuffer) {
+function convert (arrayBuffer, options = { }) {
   const midiData = parseMidi(arrayBuffer)
-  return convertMidiData(midiData, 240)
+  return convertMidiData(midiData, 240, {
+    spacing: options.spacing
+  })
 }
 
 function numberOfNotes (result) {
@@ -71,6 +86,7 @@ function resultingMidiFileEvents (result) {
 }
 
 function assertMidiEvents (actual, expectedDescriptions) {
+  actual = actual.filter((event) => event.type === MIDIEvents.EVENT_MIDI)
   assert.equal(actual.length, expectedDescriptions.length)
   for (let i = 0; i < expectedDescriptions.length; i++) {
     const actualDescription = describeMidiEvent(actual[i])
@@ -83,18 +99,11 @@ function assertMidiEvents (actual, expectedDescriptions) {
   }
 
   function describeMidiEvent (event) {
-    if (event.type === MIDIEvents.EVENT_MIDI) {
-      if (event.subtype === MIDIEvents.EVENT_MIDI_NOTE_ON) {
-        return `${event.delta} note_on ${event.param1} ${event.param2}`
-      }
-      if (event.subtype === MIDIEvents.EVENT_MIDI_NOTE_OFF) {
-        return `${event.delta} note_off ${event.param1} ${event.param2}`
-      }
+    if (event.subtype === MIDIEvents.EVENT_MIDI_NOTE_ON) {
+      return `${event.delta} note_on ${event.param1} ${event.param2}`
     }
-    if (event.type === MIDIEvents.EVENT_META) {
-      if (event.subtype === MIDIEvents.EVENT_META_END_OF_TRACK) {
-        return `${event.delta} end of track`
-      }
+    if (event.subtype === MIDIEvents.EVENT_MIDI_NOTE_OFF) {
+      return `${event.delta} note_off ${event.param1} ${event.param2}`
     }
     throw new Error('Unknown MIDI event: ' + require('util').inspect(event))
   }
