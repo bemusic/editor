@@ -65,20 +65,21 @@ export function convertMidiData (midiData, resolution = 240) {
 
 function slice (midiNotes, { pulseToY }) {
   const groups = { }
+  const order = (value) => ('00000000' + value.toString(16)).substr(-8)
   const getKey = (note) => {
     const key = MIDINote.getKey(note)
     const startY = pulseToY(MIDINote.getStartPulse(note))
     const endY = pulseToY(MIDINote.getEndPulse(note))
     const length = endY - startY
     const velocity = MIDINote.getVelocity(note)
-    return `${key}:${velocity}:${length}`
+    return `${order(key)}:${order(velocity)}:${order(length)}`
   }
   for (const note of midiNotes) {
     const key = getKey(note)
-    const group = groups[key] || (groups[key] = [ ])
-    group.push(note)
+    const group = groups[key] || (groups[key] = { key: key, notes: [ ] })
+    group.notes.push(note)
   }
-  return _.values(groups)
+  return _.map(_.sortBy(_.values(groups), 'key'), 'notes')
 }
 
 export default convertMidiData
