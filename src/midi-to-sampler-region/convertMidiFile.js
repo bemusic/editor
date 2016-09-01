@@ -12,7 +12,8 @@ export function convertMidiFile (midi, resolution = 240, {
   const slices = (() => {
     const events = midi.getEvents()
     const midiSpacing = Math.round(ppqn * spacing / resolution)
-    const slicesBuilder = createSlicesBuilder({ spacing: midiSpacing })
+    const sliceBuilder = normalSlicer({ spacing: midiSpacing })
+    const slicesBuilder = createSlicesBuilder(sliceBuilder)
     for (const event of events) slicesBuilder.handleEvent(event)
     return slicesBuilder.build()
   })()
@@ -112,8 +113,7 @@ const normalSlicer = ({ spacing }) => (monitor) => {
   return slice
 }
 
-function createSlicesBuilder ({ spacing }) {
-  const createSliceBuilder = normalSlicer({ spacing })
+function createSlicesBuilder (createSliceBuilder) {
   let currentPulse = 0
   let currentTime = 0
   const sliceBuilders = [ ]
