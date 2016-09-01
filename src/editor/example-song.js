@@ -1,10 +1,11 @@
-import convertMidiData from '../midi-to-sampler-region/convertMidiData'
-import parseMidi from '../midi-reader/parseMidi'
+import MIDIFile from 'midifile'
+
+import convertMidiFile from '../midi-to-sampler-region/convertMidiFile'
 
 export default function loadExampleSong (callback) {
   const data = require('../midi-to-sampler-region/test-fixtures/drum.mid')
-  const midi = parseMidi(data)
-  const { samplerRegion } = convertMidiData(midi)
+  const midi = new MIDIFile(data)
+  const { samplerRegion } = convertMidiFile(midi)
   const song = {
     info: {
       length: samplerRegion.l + 960 + 960 * 4
